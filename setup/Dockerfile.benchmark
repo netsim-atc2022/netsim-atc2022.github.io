@@ -1,0 +1,161 @@
+FROM ubuntu:20.04 as base
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV DEBIAN_FRONTEND=noninteractive
+
+# https://fabianlee.org/2018/02/11/ubuntu-a-centralized-apt-package-cache-using-apt-cacher-ng/
+RUN apt-get update && apt-get install -y net-tools
+RUN if [[ `netstat -an | grep "LISTEN " | grep -c :3142` -gt 0 ]] ; \
+    then \
+      echo Will use detected apt-cacher-ng service ; \
+      echo "Acquire::http::Proxy \"http://127.0.0.1:3142\";" > /etc/apt/apt.conf.d/00proxy ; \
+    else \
+      echo apt-cacher-ng not detected ; \
+    fi
+RUN apt-get update && apt-get install -y git 
+
+# Build phantom shadow
+FROM base as build-shadow-phantom
+WORKDIR /root/src
+ARG shadow_repo=https://github.com/shadow/shadow.git 
+ARG shadow_branch=v2.0.0-pre.4
+RUN git clone --depth=1 -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow
+# copy local patch into image and apply it
+COPY patches.tar /root/src/shadow/.
+RUN tar -xf patches.tar
+RUN git apply patches/phantom/0001-Add-clock_nanosleep-syscall-handler.patch
+RUN git apply patches/phantom/0002-thread_ptrace-drop-unnecessary-spinning.patch
+# build
+ENV CC gcc
+ENV CXX g++
+ENV CONTAINER ubuntu:20.04
+ENV BUILDTYPE release
+ENV RUSTPROFILE minimal
+RUN ci/container_scripts/install_deps.sh
+RUN ci/container_scripts/install_extra_deps.sh
+ENV PATH "/root/.cargo/bin:${PATH}"
+RUN ./setup build -j`nproc` --prefix /phantom 
+RUN ./setup install
+# build a version with most preloads disabled
+RUN mv src/lib/shim/preload_syscalls.c src/lib/shim/preload_syscalls.c.bak
+RUN mv src/lib/shim/preload_libraries.c src/lib/shim/preload_libraries.c.bak
+RUN touch src/lib/shim/preload_syscalls.c
+RUN touch src/lib/shim/preload_libraries.c
+RUN ./setup build --clean -j`nproc` --prefix /phantom-nopreload 
+RUN ./setup install
+
+# Build classic shadow
+FROM base as build-shadow-classic
+WORKDIR /root/src
+# Install deps
+RUN apt-get update && apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  xz-utils \
+  python3 \
+  libglib2.0-0 \
+  libglib2.0-dev \
+  libigraph0v5 \
+  libigraph0-dev \
+  libc-dbg \
+  python3-pyelftools
+# Get shadow code
+ARG shadow_repo=https://github.com/shadow/shadow.git 
+ARG shadow_branch=v1.15.0
+RUN git clone --depth=1 -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow
+# copy local patches into image and apply
+COPY patches.tar /root/src/shadow/.
+RUN tar -xf patches.tar
+RUN git apply patches/classic/0001-Added-clock_nanosleep.patch
+RUN git apply patches/classic/0002-Add-uname.patch
+RUN git apply patches/classic/0003-Fix-build-errors.patch
+# Build
+ENV CC gcc
+ENV CXX g++
+RUN ./setup build -j`nproc` --prefix /classic 
+RUN ./setup install
+
+# build the benchmark and phold tools
+FROM base as build-benchmark
+WORKDIR /root/src
+RUN apt-get update && apt-get install -y \
+  gcc \
+  g++ \
+  make \
+  curl
+# install rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable --profile minimal --no-modify-path -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN cargo --version
+RUN rustc --version
+RUN rustup default stable
+# update package index
+RUN cargo search foo
+# Copy local context_switching tar file on the host into the image and build
+COPY context_switching.tar /root/src/.
+WORKDIR /root/src
+RUN tar -xf context_switching.tar
+WORKDIR /root/src/context_switching
+RUN make context_switching
+RUN mkdir -p /root/.local/bin
+RUN cp -a context_switching /root/.local/bin/
+# Copy local bmark tar file on the host into the image and build
+COPY bmark.tar /root/src/.
+WORKDIR /root/src
+RUN tar -xf bmark.tar
+WORKDIR /root/src/bmark/src
+RUN make
+RUN mkdir -p /root/.local/bin
+RUN cp -a benchmark /root/.local/bin/
+# Copy local phold tar file on the host into the image and build
+COPY phold.tar /root/src/.
+WORKDIR /root/src
+RUN tar -xf phold.tar
+WORKDIR /root/src/phold
+RUN cargo build --release
+RUN mkdir -p /root/.local/bin
+RUN cp -a target/release/phold /root/.local/bin/
+
+# the layer that will run the sims
+FROM base as simulate
+WORKDIR /root/data
+# runtime deps
+RUN apt-get update \
+  && apt-get install -y -q --no-install-recommends \
+          python3 \
+          python3-pip \
+          python3-pybindgen \
+          libglib2.0-0 \
+          libigraph-dev \
+          libprocps-dev \
+          python3 \
+          dstat \
+          vim-tiny \
+          linux-tools-generic \
+  && rm  -rf /var/lib/apt/lists/*
+RUN pip3 install numpy scipy pandas lxml pyyaml networkx
+RUN mkdir -p /root/.local/bin
+#RUN ln -s /usr/lib/linux-tools/5.4.0-81-generic/perf /root/.local/bin/perf
+RUN ln -s /usr/lib/linux-tools-*/perf /root/.local/bin/perf
+#sys limits
+RUN echo fs.nr_open = 104857600 >> /etc/sysctl.conf
+RUN echo fs.file-max = 104857600 >> /etc/sysctl.conf
+RUN echo vm.max_map_count = 1073741824 >> /etc/sysctl.conf
+RUN echo kernel.pid_max = 4194300 >> /etc/sysctl.conf
+RUN echo kernel.threads-max = 4194300 >> /etc/sysctl.conf
+RUN echo kernel.sched_rt_runtime_us = -1 >> /etc/sysctl.conf
+#RUN sysctl -p
+# Get the binaries for our sim tools
+COPY --from=build-shadow-phantom /phantom /phantom/
+COPY --from=build-shadow-phantom /phantom-nopreload /phantom-nopreload/
+COPY --from=build-shadow-classic /classic /classic/
+# Our configs expect the sim binaries to live in ~/.local.
+COPY --from=build-benchmark /root/.local /root/.local/
+ENV PATH="/root/.local/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/root/.local/lib:/classic/lib"
+
+# Default command runs the /root/data/run.sh script
+WORKDIR /root/data
+CMD bash run.sh

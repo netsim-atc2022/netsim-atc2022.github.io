@@ -1,0 +1,962 @@
+[
+  {
+    "exe": {
+      "cpuload": 0,
+      "enable_logging": 1,
+      "msgload": 100,
+      "name": "phold",
+      "path": "/root/.local/bin/phold",
+      "quantity": 1000,
+      "use_shadow_addressing": "true",
+      "use_uname_idx_lookup": "true",
+      "weights": "skewed"
+    },
+    "interpose_method": "ptrace",
+    "name": "shadow",
+    "num_workers": 28,
+    "path": "/phantom/bin/shadow",
+    "quantity": 1000,
+    "runtime": 11,
+    "scheduling_policy": "host",
+    "use_logging": true,
+    "use_memory_manager": true,
+    "use_pinning": true,
+    "use_realtime": false,
+    "use_shim_syscall_handler": true,
+    "use_single_core": false,
+    "use_syscall_counters": true,
+    "use_syscall_preloading": true,
+    "~results": {
+      "mem_used_gib": {
+        "count": 10,
+        "max": 1.3956947326660156,
+        "mean": 1.3877262115478515,
+        "median": 1.387704849243164,
+        "min": 1.3783035278320312,
+        "std": 0.005210195709152346,
+        "var": 2.714613932766952e-05
+      },
+      "object_events": {
+        "count": 10,
+        "max": 30202382,
+        "mean": 30200238.2,
+        "median": 30200200.5,
+        "min": 30198863,
+        "std": 927.89048922812,
+        "var": 860980.76
+      },
+      "object_payloads": {
+        "count": 10,
+        "max": 20000000,
+        "mean": 20000000.0,
+        "median": 20000000.0,
+        "min": 20000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "packets": {
+        "count": 10,
+        "max": 18000000,
+        "mean": 18000000.0,
+        "median": 18000000.0,
+        "min": 18000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "payload_gib": {
+        "count": 10,
+        "max": 17.1661376953125,
+        "mean": 17.1661376953125,
+        "median": 17.1661376953125,
+        "min": 17.1661376953125,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "perf_branch-misses": {
+        "count": 10,
+        "max": 7580901535,
+        "mean": 7451594511.0,
+        "median": 7484485897.5,
+        "min": 7169687403,
+        "std": 122563747.39670698,
+        "var": 1.5021872175923798e+16
+      },
+      "perf_branches": {
+        "count": 10,
+        "max": 737744159942,
+        "mean": 722674583964.4,
+        "median": 721814655693.5,
+        "min": 714281017595,
+        "std": 6794205975.5025215,
+        "var": 4.616123483755418e+19
+      },
+      "perf_cache-misses": {
+        "count": 10,
+        "max": 3804436944,
+        "mean": 3745638330.6,
+        "median": 3747118004.0,
+        "min": 3696727984,
+        "std": 26276523.977475952,
+        "var": 690455712338868.6
+      },
+      "perf_cache-references": {
+        "count": 10,
+        "max": 52237626573,
+        "mean": 43332812720.9,
+        "median": 41853515332.0,
+        "min": 41005578108,
+        "std": 3212222116.8757286,
+        "var": 1.0318370928145588e+19
+      },
+      "perf_context-switches": {
+        "count": 10,
+        "max": 122348124,
+        "mean": 122295877.4,
+        "median": 122281148.5,
+        "min": 122265067,
+        "std": 29325.543473906837,
+        "var": 859987500.04
+      },
+      "perf_cpu-migrations": {
+        "count": 10,
+        "max": 9820,
+        "mean": 8030.3,
+        "median": 7713.0,
+        "min": 7336,
+        "std": 754.4154094396534,
+        "var": 569142.6099999999
+      },
+      "perf_cycles": {
+        "count": 10,
+        "max": 6595169463340,
+        "mean": 6443051127864.0,
+        "median": 6427250385098.5,
+        "min": 6312967913631,
+        "std": 89344462138.17749,
+        "var": 7.98243291476023e+21
+      },
+      "perf_duration-time-sec": {
+        "count": 10,
+        "max": 80.865234345,
+        "mean": 79.1556857495,
+        "median": 78.81301455900001,
+        "min": 77.62125929,
+        "std": 1.0913375812250636,
+        "var": 1.1910177161941722
+      },
+      "perf_instructions": {
+        "count": 10,
+        "max": 3403049140004,
+        "mean": 3342209763272.9,
+        "median": 3338546399294.5,
+        "min": 3306991692405,
+        "std": 27532511609.77909,
+        "var": 7.580391955426205e+20
+      },
+      "perf_page-faults": {
+        "count": 10,
+        "max": 683113,
+        "mean": 660524.9,
+        "median": 666341.5,
+        "min": 633857,
+        "std": 17949.20408513982,
+        "var": 322173927.28999996
+      },
+      "perf_task-clock-msec": {
+        "count": 10,
+        "max": 2170783.81,
+        "mean": 2121349.154,
+        "median": 2115656.38,
+        "min": 2078303.93,
+        "std": 29627.14497915497,
+        "var": 877767719.6158676
+      },
+      "seconds_to_init": {
+        "count": 10,
+        "max": 3.718246,
+        "mean": 3.3553706000000005,
+        "median": 3.3501695,
+        "min": 2.822275,
+        "std": 0.28314459966391736,
+        "var": 0.08017086431884002
+      },
+      "syscalls": {
+        "count": 10,
+        "max": 60069000,
+        "mean": 60069000.0,
+        "median": 60069000.0,
+        "min": 60069000,
+        "std": 0.0,
+        "var": 0.0
+      }
+    }
+  },
+  {
+    "exe": {
+      "cpuload": 0,
+      "enable_logging": 1,
+      "msgload": 100,
+      "name": "phold",
+      "path": "/root/.local/bin/phold",
+      "quantity": 1000,
+      "use_shadow_addressing": "true",
+      "use_uname_idx_lookup": "true",
+      "weights": "skewed"
+    },
+    "interpose_method": "classic",
+    "name": "shadow",
+    "num_workers": 28,
+    "path": "/classic/bin/shadow",
+    "quantity": 1000,
+    "runtime": 11,
+    "scheduling_policy": "host",
+    "use_logging": true,
+    "use_memory_manager": null,
+    "use_pinning": true,
+    "use_realtime": false,
+    "use_shim_syscall_handler": null,
+    "use_single_core": false,
+    "use_syscall_counters": null,
+    "use_syscall_preloading": null,
+    "~results": {
+      "mem_used_gib": {
+        "count": 10,
+        "max": 2.2960357666015625,
+        "mean": 2.244854736328125,
+        "median": 2.236753463745117,
+        "min": 2.2116622924804688,
+        "std": 0.024949652761808733,
+        "var": 0.0006224851729348302
+      },
+      "object_events": {
+        "count": 10,
+        "max": 40133000,
+        "mean": 40133000.0,
+        "median": 40133000.0,
+        "min": 40133000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "object_payloads": {
+        "count": 10,
+        "max": 20000000,
+        "mean": 20000000.0,
+        "median": 20000000.0,
+        "min": 20000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "packets": {
+        "count": 10,
+        "max": 18000000,
+        "mean": 18000000.0,
+        "median": 18000000.0,
+        "min": 18000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "payload_gib": {
+        "count": 10,
+        "max": 17.1661376953125,
+        "mean": 17.1661376953125,
+        "median": 17.1661376953125,
+        "min": 17.1661376953125,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "perf_branch-misses": {
+        "count": 10,
+        "max": 4655348266,
+        "mean": 4554991783.7,
+        "median": 4545747940.0,
+        "min": 4440685708,
+        "std": 56239070.287066616,
+        "var": 3162833026753619.0
+      },
+      "perf_branches": {
+        "count": 10,
+        "max": 482627323671,
+        "mean": 478669274566.6,
+        "median": 478660154978.0,
+        "min": 474612776068,
+        "std": 2143836846.5262938,
+        "var": 4.5960364245238036e+18
+      },
+      "perf_cache-misses": {
+        "count": 10,
+        "max": 5277324498,
+        "mean": 5250380314.9,
+        "median": 5250460232.0,
+        "min": 5230364818,
+        "std": 13489927.941786595,
+        "var": 181978155874594.7
+      },
+      "perf_cache-references": {
+        "count": 10,
+        "max": 24474844503,
+        "mean": 23578934484.8,
+        "median": 23587132585.5,
+        "min": 22591539218,
+        "std": 557053296.9389026,
+        "var": 3.103083756305012e+17
+      },
+      "perf_context-switches": {
+        "count": 10,
+        "max": 2158756,
+        "mean": 2092953.6,
+        "median": 2083888.0,
+        "min": 2033931,
+        "std": 38037.20803949732,
+        "var": 1446829195.44
+      },
+      "perf_cpu-migrations": {
+        "count": 10,
+        "max": 5777,
+        "mean": 5371.1,
+        "median": 5364.5,
+        "min": 4909,
+        "std": 231.82469669989862,
+        "var": 53742.68999999999
+      },
+      "perf_cycles": {
+        "count": 10,
+        "max": 4080338126400,
+        "mean": 4022379641294.4,
+        "median": 4005151353485.5,
+        "min": 3988628110565,
+        "std": 34118142874.212265,
+        "var": 1.164047673185161e+21
+      },
+      "perf_duration-time-sec": {
+        "count": 10,
+        "max": 53.850237888,
+        "mean": 53.106326844399995,
+        "median": 52.938658684,
+        "min": 52.518852402,
+        "std": 0.4359569149421424,
+        "var": 0.1900584316858704
+      },
+      "perf_instructions": {
+        "count": 10,
+        "max": 2253385489010,
+        "mean": 2234034798401.3,
+        "median": 2232684638459.0,
+        "min": 2214846514213,
+        "std": 10475164991.819927,
+        "var": 1.0972908160584976e+20
+      },
+      "perf_page-faults": {
+        "count": 10,
+        "max": 1871819,
+        "mean": 1523683.8,
+        "median": 1484770.0,
+        "min": 1483322,
+        "std": 116054.2946588363,
+        "var": 13468599308.759998
+      },
+      "perf_task-clock-msec": {
+        "count": 10,
+        "max": 1336555.48,
+        "mean": 1317550.4720000003,
+        "median": 1311965.865,
+        "min": 1306723.74,
+        "std": 11184.623120302123,
+        "var": 125095794.3431968
+      },
+      "seconds_to_init": {
+        "count": 10,
+        "max": 2.913688,
+        "mean": 2.7882011,
+        "median": 2.7937000000000003,
+        "min": 2.61689,
+        "std": 0.07960093525260861,
+        "var": 0.006336308893089988
+      },
+      "syscalls": {
+        "count": 10,
+        "max": 0,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0,
+        "std": 0.0,
+        "var": 0.0
+      }
+    }
+  },
+  {
+    "exe": {
+      "cpuload": 0,
+      "enable_logging": 1,
+      "msgload": 100,
+      "name": "phold",
+      "path": "/root/.local/bin/phold",
+      "quantity": 1000,
+      "use_shadow_addressing": "true",
+      "use_uname_idx_lookup": "true",
+      "weights": "skewed"
+    },
+    "interpose_method": "seccomp",
+    "name": "shadow",
+    "num_workers": 28,
+    "path": "/phantom/bin/shadow",
+    "quantity": 1000,
+    "runtime": 11,
+    "scheduling_policy": "host",
+    "use_logging": true,
+    "use_memory_manager": false,
+    "use_pinning": true,
+    "use_realtime": false,
+    "use_shim_syscall_handler": true,
+    "use_single_core": false,
+    "use_syscall_counters": true,
+    "use_syscall_preloading": true,
+    "~results": {
+      "mem_used_gib": {
+        "count": 10,
+        "max": 1.1862831115722656,
+        "mean": 1.1715831756591797,
+        "median": 1.1741313934326172,
+        "min": 1.155364990234375,
+        "std": 0.010035231262814732,
+        "var": 0.00010070586649817415
+      },
+      "object_events": {
+        "count": 10,
+        "max": 30202382,
+        "mean": 30200238.2,
+        "median": 30200200.5,
+        "min": 30198863,
+        "std": 927.89048922812,
+        "var": 860980.76
+      },
+      "object_payloads": {
+        "count": 10,
+        "max": 20000000,
+        "mean": 20000000.0,
+        "median": 20000000.0,
+        "min": 20000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "packets": {
+        "count": 10,
+        "max": 18000000,
+        "mean": 18000000.0,
+        "median": 18000000.0,
+        "min": 18000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "payload_gib": {
+        "count": 10,
+        "max": 17.1661376953125,
+        "mean": 17.1661376953125,
+        "median": 17.1661376953125,
+        "min": 17.1661376953125,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "perf_branch-misses": {
+        "count": 10,
+        "max": 6216215148,
+        "mean": 6061628318.6,
+        "median": 6061315181.5,
+        "min": 5897961933,
+        "std": 73226707.74726881,
+        "var": 5362150727503918.0
+      },
+      "perf_branches": {
+        "count": 10,
+        "max": 439599946594,
+        "mean": 431953495491.1,
+        "median": 428719702626.0,
+        "min": 427210771183,
+        "std": 5115127988.289164,
+        "var": 2.616453433657915e+19
+      },
+      "perf_cache-misses": {
+        "count": 10,
+        "max": 2317289589,
+        "mean": 2051158871.6,
+        "median": 1928053071.5,
+        "min": 1896012134,
+        "std": 176890982.59753847,
+        "var": 3.1290419724322656e+16
+      },
+      "perf_cache-references": {
+        "count": 10,
+        "max": 23620598004,
+        "mean": 20556735531.7,
+        "median": 19965798168.0,
+        "min": 17489711929,
+        "std": 1689673813.1670291,
+        "var": 2.854997594902408e+18
+      },
+      "perf_context-switches": {
+        "count": 10,
+        "max": 120818799,
+        "mean": 120770383.3,
+        "median": 120773219.5,
+        "min": 120714399,
+        "std": 36359.778445557116,
+        "var": 1322033488.6100001
+      },
+      "perf_cpu-migrations": {
+        "count": 10,
+        "max": 10246,
+        "mean": 8340.5,
+        "median": 7895.5,
+        "min": 7180,
+        "std": 1143.0463901347136,
+        "var": 1306555.05
+      },
+      "perf_cycles": {
+        "count": 10,
+        "max": 3468432859829,
+        "mean": 2806734577173.9,
+        "median": 2530310079294.5,
+        "min": 2411561850164,
+        "std": 416245867073.12585,
+        "var": 1.7326062185545835e+23
+      },
+      "perf_duration-time-sec": {
+        "count": 10,
+        "max": 43.508681804,
+        "mean": 35.625742491400004,
+        "median": 32.372288883500005,
+        "min": 30.819234999,
+        "std": 4.905222838029242,
+        "var": 24.06121109072365
+      },
+      "perf_instructions": {
+        "count": 10,
+        "max": 2119783381934,
+        "mean": 2078793096883.7,
+        "median": 2061445175087.5,
+        "min": 2053178851601,
+        "std": 27326199336.577755,
+        "var": 7.467211701823826e+20
+      },
+      "perf_page-faults": {
+        "count": 10,
+        "max": 387283,
+        "mean": 348473.2,
+        "median": 340133.0,
+        "min": 315723,
+        "std": 25887.376938577614,
+        "var": 670156284.76
+      },
+      "perf_task-clock-msec": {
+        "count": 10,
+        "max": 1148066.86,
+        "mean": 931945.3529999999,
+        "median": 841919.05,
+        "min": 802483.15,
+        "std": 135768.0090303071,
+        "var": 18432952276.05355
+      },
+      "seconds_to_init": {
+        "count": 10,
+        "max": 0.887039,
+        "mean": 0.7750675,
+        "median": 0.7577885,
+        "min": 0.735009,
+        "std": 0.04094569531525872,
+        "var": 0.00167654996485
+      },
+      "syscalls": {
+        "count": 10,
+        "max": 59881000,
+        "mean": 59881000.0,
+        "median": 59881000.0,
+        "min": 59881000,
+        "std": 0.0,
+        "var": 0.0
+      }
+    }
+  },
+  {
+    "exe": {
+      "cpuload": 0,
+      "enable_logging": 1,
+      "msgload": 100,
+      "name": "phold",
+      "path": "/root/.local/bin/phold",
+      "quantity": 1000,
+      "use_shadow_addressing": "true",
+      "use_uname_idx_lookup": "true",
+      "weights": "skewed"
+    },
+    "interpose_method": "ptrace",
+    "name": "shadow",
+    "num_workers": 28,
+    "path": "/phantom/bin/shadow",
+    "quantity": 1000,
+    "runtime": 11,
+    "scheduling_policy": "host",
+    "use_logging": true,
+    "use_memory_manager": false,
+    "use_pinning": true,
+    "use_realtime": false,
+    "use_shim_syscall_handler": true,
+    "use_single_core": false,
+    "use_syscall_counters": true,
+    "use_syscall_preloading": true,
+    "~results": {
+      "mem_used_gib": {
+        "count": 10,
+        "max": 1.1741294860839844,
+        "mean": 1.1652511596679687,
+        "median": 1.1644096374511719,
+        "min": 1.1556739807128906,
+        "std": 0.0062593098774326415,
+        "var": 3.917896014172583e-05
+      },
+      "object_events": {
+        "count": 10,
+        "max": 30202382,
+        "mean": 30200238.2,
+        "median": 30200200.5,
+        "min": 30198863,
+        "std": 927.89048922812,
+        "var": 860980.76
+      },
+      "object_payloads": {
+        "count": 10,
+        "max": 20000000,
+        "mean": 20000000.0,
+        "median": 20000000.0,
+        "min": 20000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "packets": {
+        "count": 10,
+        "max": 18000000,
+        "mean": 18000000.0,
+        "median": 18000000.0,
+        "min": 18000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "payload_gib": {
+        "count": 10,
+        "max": 17.1661376953125,
+        "mean": 17.1661376953125,
+        "median": 17.1661376953125,
+        "min": 17.1661376953125,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "perf_branch-misses": {
+        "count": 10,
+        "max": 7801995142,
+        "mean": 7662542463.4,
+        "median": 7689649078.5,
+        "min": 7346294557,
+        "std": 127274630.03136937,
+        "var": 1.6198831449621952e+16
+      },
+      "perf_branches": {
+        "count": 10,
+        "max": 717848118881,
+        "mean": 710251406941.2,
+        "median": 710764089740.0,
+        "min": 699306580549,
+        "std": 6111582924.552655,
+        "var": 3.735144584368358e+19
+      },
+      "perf_cache-misses": {
+        "count": 10,
+        "max": 3668184892,
+        "mean": 3631555752.6,
+        "median": 3632106295.5,
+        "min": 3605733310,
+        "std": 16853847.70607503,
+        "var": 284052182499570.6
+      },
+      "perf_cache-references": {
+        "count": 10,
+        "max": 37346826427,
+        "mean": 35436893226.8,
+        "median": 35807856974.5,
+        "min": 32350036935,
+        "std": 1507187301.1034944,
+        "var": 2.2716135606076355e+18
+      },
+      "perf_context-switches": {
+        "count": 10,
+        "max": 122020868,
+        "mean": 121996150.0,
+        "median": 122001298.0,
+        "min": 121968810,
+        "std": 14810.708227495403,
+        "var": 219357078.2
+      },
+      "perf_cpu-migrations": {
+        "count": 10,
+        "max": 9436,
+        "mean": 8209.4,
+        "median": 8184.5,
+        "min": 7055,
+        "std": 788.22385145338,
+        "var": 621296.8400000001
+      },
+      "perf_cycles": {
+        "count": 10,
+        "max": 6615719567115,
+        "mean": 6455393943861.5,
+        "median": 6443557236196.0,
+        "min": 6328188600578,
+        "std": 98278600363.51146,
+        "var": 9.658683289410795e+21
+      },
+      "perf_duration-time-sec": {
+        "count": 10,
+        "max": 80.934281482,
+        "mean": 78.7171781083,
+        "median": 78.51449968200001,
+        "min": 77.187332631,
+        "std": 1.227258857037979,
+        "var": 1.5061643021781668
+      },
+      "perf_instructions": {
+        "count": 10,
+        "max": 3292504804243,
+        "mean": 3262953872263.7,
+        "median": 3265557827145.5,
+        "min": 3217700169349,
+        "std": 24576656610.710487,
+        "var": 6.040120501607795e+20
+      },
+      "perf_page-faults": {
+        "count": 10,
+        "max": 430917,
+        "mean": 416377.1,
+        "median": 417458.5,
+        "min": 400020,
+        "std": 10942.736261557253,
+        "var": 119743476.88999999
+      },
+      "perf_task-clock-msec": {
+        "count": 10,
+        "max": 2177837.52,
+        "mean": 2123021.874,
+        "median": 2118633.74,
+        "min": 2081927.55,
+        "std": 32518.623543509744,
+        "var": 1057460877.1645062
+      },
+      "seconds_to_init": {
+        "count": 10,
+        "max": 4.226233,
+        "mean": 4.0727578,
+        "median": 4.054353000000001,
+        "min": 3.933002,
+        "std": 0.09594146697106515,
+        "var": 0.009204765084559984
+      },
+      "syscalls": {
+        "count": 10,
+        "max": 60069000,
+        "mean": 60069000.0,
+        "median": 60069000.0,
+        "min": 60069000,
+        "std": 0.0,
+        "var": 0.0
+      }
+    }
+  },
+  {
+    "exe": {
+      "cpuload": 0,
+      "enable_logging": 1,
+      "msgload": 100,
+      "name": "phold",
+      "path": "/root/.local/bin/phold",
+      "quantity": 1000,
+      "use_shadow_addressing": "true",
+      "use_uname_idx_lookup": "true",
+      "weights": "skewed"
+    },
+    "interpose_method": "seccomp",
+    "name": "shadow",
+    "num_workers": 28,
+    "path": "/phantom/bin/shadow",
+    "quantity": 1000,
+    "runtime": 11,
+    "scheduling_policy": "host",
+    "use_logging": true,
+    "use_memory_manager": true,
+    "use_pinning": true,
+    "use_realtime": false,
+    "use_shim_syscall_handler": true,
+    "use_single_core": false,
+    "use_syscall_counters": true,
+    "use_syscall_preloading": true,
+    "~results": {
+      "mem_used_gib": {
+        "count": 10,
+        "max": 1.5035057067871094,
+        "mean": 1.494957733154297,
+        "median": 1.4955863952636719,
+        "min": 1.4813613891601562,
+        "std": 0.006286403920764955,
+        "var": 3.9518874255009e-05
+      },
+      "object_events": {
+        "count": 10,
+        "max": 30202382,
+        "mean": 30200238.2,
+        "median": 30200200.5,
+        "min": 30198863,
+        "std": 927.89048922812,
+        "var": 860980.76
+      },
+      "object_payloads": {
+        "count": 10,
+        "max": 20000000,
+        "mean": 20000000.0,
+        "median": 20000000.0,
+        "min": 20000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "packets": {
+        "count": 10,
+        "max": 18000000,
+        "mean": 18000000.0,
+        "median": 18000000.0,
+        "min": 18000000,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "payload_gib": {
+        "count": 10,
+        "max": 17.1661376953125,
+        "mean": 17.1661376953125,
+        "median": 17.1661376953125,
+        "min": 17.1661376953125,
+        "std": 0.0,
+        "var": 0.0
+      },
+      "perf_branch-misses": {
+        "count": 10,
+        "max": 5842358481,
+        "mean": 5763009031.2,
+        "median": 5769072019.0,
+        "min": 5670968405,
+        "std": 51793253.66212302,
+        "var": 2682541124909019.0
+      },
+      "perf_branches": {
+        "count": 10,
+        "max": 456106518397,
+        "mean": 447115770121.2,
+        "median": 445011677082.5,
+        "min": 444180156656,
+        "std": 4369427901.900242,
+        "var": 1.9091900189904347e+19
+      },
+      "perf_cache-misses": {
+        "count": 10,
+        "max": 2447720469,
+        "mean": 2125576995.5,
+        "median": 2047479951.5,
+        "min": 2024345251,
+        "std": 160068388.56587085,
+        "var": 2.5621889018074616e+16
+      },
+      "perf_cache-references": {
+        "count": 10,
+        "max": 29661502355,
+        "mean": 26594509715.4,
+        "median": 26020841808.5,
+        "min": 25101059197,
+        "std": 1526034105.6790729,
+        "var": 2.3287800916957276e+18
+      },
+      "perf_context-switches": {
+        "count": 10,
+        "max": 121271763,
+        "mean": 121128123.4,
+        "median": 121116593.0,
+        "min": 121003594,
+        "std": 87400.13734565867,
+        "var": 7638784008.040001
+      },
+      "perf_cpu-migrations": {
+        "count": 10,
+        "max": 10181,
+        "mean": 8824.7,
+        "median": 8824.5,
+        "min": 7326,
+        "std": 846.4516583952093,
+        "var": 716480.4100000001
+      },
+      "perf_cycles": {
+        "count": 10,
+        "max": 3443386952683,
+        "mean": 2700895934238.7,
+        "median": 2527756065903.5,
+        "min": 2491706948046,
+        "std": 359124068680.20575,
+        "var": 1.2897009670542515e+23
+      },
+      "perf_duration-time-sec": {
+        "count": 10,
+        "max": 43.249046752,
+        "mean": 34.66401717270001,
+        "median": 32.78859998,
+        "min": 32.118535413,
+        "std": 4.1873277975936665,
+        "var": 17.533714084500623
+      },
+      "perf_instructions": {
+        "count": 10,
+        "max": 2216015268261,
+        "mean": 2168099202872.9,
+        "median": 2157103683716.0,
+        "min": 2152003233199,
+        "std": 23295042015.54225,
+        "var": 5.426589825058788e+20
+      },
+      "perf_page-faults": {
+        "count": 10,
+        "max": 501568,
+        "mean": 473383.7,
+        "median": 474497.5,
+        "min": 442903,
+        "std": 18461.26859156759,
+        "var": 340818438.01
+      },
+      "perf_task-clock-msec": {
+        "count": 10,
+        "max": 1140272.65,
+        "mean": 898700.091,
+        "median": 842128.145,
+        "min": 830333.67,
+        "std": 117044.77928523759,
+        "var": 13699480357.929983
+      },
+      "seconds_to_init": {
+        "count": 10,
+        "max": 0.888366,
+        "mean": 0.8641125000000001,
+        "median": 0.859942,
+        "min": 0.850728,
+        "std": 0.013474168770280409,
+        "var": 0.00018155322404999987
+      },
+      "syscalls": {
+        "count": 10,
+        "max": 59881000,
+        "mean": 59881000.0,
+        "median": 59881000.0,
+        "min": 59881000,
+        "std": 0.0,
+        "var": 0.0
+      }
+    }
+  }
+]

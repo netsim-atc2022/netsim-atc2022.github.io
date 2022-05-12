@@ -1,0 +1,24 @@
+general:
+  # stop after 10 simulated seconds
+  stop_time: 10s
+
+network:
+  graph:
+    # use a built-in network graph containing
+    # a single vertex with a bandwidth of 1 Gbit
+    type: 1_gbit_switch
+
+hosts:
+  # a host with the hostname 'server'
+  server:
+    processes:
+    - path: /bin/python3
+      args: -m http.server 80
+      start_time: 3s
+  # three hosts with hostnames 'client1', 'client2', and 'client3'
+  client:
+    quantity: 3
+    processes:
+    - path: /bin/curl
+      args: -s server
+      start_time: 5s

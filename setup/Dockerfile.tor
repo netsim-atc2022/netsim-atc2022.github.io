@@ -1,0 +1,276 @@
+FROM ubuntu:20.04 as base
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV DEBIAN_FRONTEND=noninteractive
+
+# https://fabianlee.org/2018/02/11/ubuntu-a-centralized-apt-package-cache-using-apt-cacher-ng/
+RUN apt-get update && apt-get install -y net-tools
+RUN if [[ `netstat -an | grep "LISTEN " | grep -c :3142` -gt 0 ]] ; \
+    then \
+      echo Will use detected apt-cacher-ng service ; \
+      echo "Acquire::http::Proxy \"http://127.0.0.1:3142\";" > /etc/apt/apt.conf.d/00proxy ; \
+    else \
+      echo apt-cacher-ng not detected ; \
+    fi
+RUN apt-get update && apt-get install -y git 
+
+# Build phantom shadow
+FROM base as build-shadow-phantom
+WORKDIR /root/src
+ARG shadow_repo=https://github.com/shadow/shadow.git 
+ARG shadow_branch=v2.0.0-pre.4
+RUN git clone --depth=1 -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow
+ENV CC gcc
+ENV CXX g++
+ENV CONTAINER ubuntu:20.04
+ENV BUILDTYPE release
+ENV RUSTPROFILE minimal
+RUN ci/container_scripts/install_deps.sh
+RUN ci/container_scripts/install_extra_deps.sh
+ENV PATH "/root/.cargo/bin:${PATH}"
+RUN ./setup build -j`nproc` --prefix /phantom 
+RUN ./setup install
+
+# Build classic shadow
+FROM base as build-shadow-classic
+WORKDIR /root/src
+# Install deps
+RUN apt-get update && apt-get install -y \
+  g++ \
+  make \
+  cmake \
+  xz-utils \
+  python3 \
+  libglib2.0-0 \
+  libglib2.0-dev \
+  libigraph0v5 \
+  libigraph0-dev \
+  libc-dbg \
+  python3-pyelftools
+# Get shadow code
+ARG shadow_repo=https://github.com/shadow/shadow.git 
+ARG shadow_branch=v1.15.0
+RUN git clone --depth=1 -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow
+# Fix build errors
+RUN sed -i 's/struct timezone\* b/void\* b/g' src/preload/preload_defs.h
+RUN mv src/preload/interposer.c src/preload/interposer.c.orig
+RUN cat src/preload/interposer.c.orig | grep -v " fprintf(stderr" > src/preload/interposer.c
+# Build
+ENV CC gcc
+ENV CXX g++
+RUN ./setup build -j`nproc` --prefix /classic 
+RUN ./setup install
+
+# Build tgen
+FROM base as build-tgen
+RUN apt-get update && apt-get install -y \
+  cmake \
+  libglib2.0-0 \
+  libglib2.0-dev \
+  libigraph0-dev \
+  libigraph0v5
+WORKDIR /root/src
+ARG tgen_repo=https://github.com/shadow/tgen.git
+ARG tgen_branch=main
+RUN git clone -b $tgen_branch $tgen_repo
+WORKDIR /root/src/tgen
+RUN git checkout -b phantom 47d5eb385195eb22a87b05984116447ad32ef8d7
+WORKDIR /root/src/tgen/build
+RUN cmake .. -DCMAKE_INSTALL_PREFIX=/root/.local
+RUN make -j`nproc`
+RUN make install
+
+# Build oniontrace
+FROM base as build-oniontrace
+RUN apt-get update && apt-get install -y \
+  cmake \
+  libglib2.0-0 \
+  libglib2.0-dev
+WORKDIR /root/src
+ARG oniontrace_repo=https://github.com/shadow/oniontrace.git
+ARG oniontrace_branch=main
+RUN git clone -b $oniontrace_branch $oniontrace_repo
+WORKDIR /root/src/oniontrace
+RUN git checkout -b phantom bc26be3c4737a8a367a156f12bab2975cd811855
+WORKDIR /root/src/oniontrace/build
+RUN cmake .. -DCMAKE_INSTALL_PREFIX=/root/.local
+RUN make -j`nproc`
+RUN make install
+
+# need custom-built openssl for tor, for classic mode
+FROM base as build-openssl
+RUN apt-get update && apt-get install -y \
+  autoconf \
+  automake \
+  gcc \
+  make \
+  wget
+WORKDIR /root/src
+RUN wget https://www.openssl.org/source/old/1.1.0/openssl-1.1.0h.tar.gz
+RUN tar xaf openssl-1.1.0h.tar.gz
+WORKDIR /root/src/openssl-1.1.0h
+RUN ./config --prefix=/root/.local shared threads enable-ec_nistp_64_gcc_128 -fPIC
+RUN make
+RUN make install_sw
+
+# need custom-built libevent for tor, for classic mode
+FROM base as build-libevent
+RUN apt-get update && apt-get install -y \
+  autoconf \
+  automake \
+  gcc \
+  make \
+  wget
+WORKDIR /root/src
+RUN wget https://github.com/libevent/libevent/releases/download/release-2.1.11-stable/libevent-2.1.11-stable.tar.gz
+RUN tar xaf libevent-2.1.11-stable.tar.gz
+WORKDIR /root/src/libevent-2.1.11-stable
+COPY --from=build-openssl /root/.local /root/.local/
+RUN ./configure --prefix=/root/.local --enable-shared CFLAGS="-fPIC -I/root/.local/include/" LDFLAGS="-L/root/.local/lib/"
+RUN make
+RUN make install
+
+# Build tor
+FROM base as build-tor
+RUN apt-get update && apt-get install -y \
+  autoconf \
+  automake \
+  gcc \
+  make \
+  zlib1g-dev
+# using custom-built libevent-dev and libssl-dev
+COPY --from=build-openssl /root/.local /root/.local/
+COPY --from=build-libevent /root/.local /root/.local/
+WORKDIR /root/src
+ARG tor_repo=https://gitlab.torproject.org/tpo/core/tor.git
+ARG tor_branch=tor-0.4.5.9
+RUN git clone --depth=1 -b $tor_branch $tor_repo
+WORKDIR /root/src/tor
+RUN sh autogen.sh
+RUN ./configure \
+  --prefix=/root/.local \
+  --with-openssl-dir=/root/.local \
+  --with-libevent-dir=/root/.local \
+  --disable-unittests \
+  --disable-asciidoc \
+  --disable-manpage \
+  --disable-html-manual \
+  --disable-gcc-hardening \
+  --disable-linker-hardening \
+  --disable-fragile-hardening \
+  --disable-expensive-hardening \
+  --disable-seccomp \
+  --disable-system-torrc \
+  --disable-dependency-tracking \
+  --enable-pic
+RUN make -j`nproc`
+# want a shared object executable that can load in classic AND run in phantom
+RUN CMD=`make -n | grep "src/app/tor;gcc" | cut -d'"' -f3 | sed 's/src\/app\/tor;gcc /gcc -pie /'`
+RUN $CMD
+RUN make install
+
+# tor preload is only needed for classic to make sure
+# we don't init openssl multiple times in the same process
+FROM base as build-tor-preload
+RUN apt-get update && apt-get install -y \
+  gcc
+WORKDIR /root/src
+ARG shadow_repo=https://github.com/shadow/shadow-plugin-tor.git 
+ARG shadow_branch=main
+RUN git clone -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow-plugin-tor
+RUN git checkout -b phantom a1be39535c2bec04826ce70b99d43f80c082c0d0
+# Remove the aes interception to match phantom
+RUN sed -i '68,121d' src/tor/shadowtor-preload.c
+# using custom-built libevent-dev and libssl-dev
+COPY --from=build-openssl /root/.local /root/.local/
+COPY --from=build-libevent /root/.local /root/.local/
+#[ 50%] Building C object src/CMakeFiles/shadow-preload-tor.dir/shadowtor-preload.c.o
+#/usr/bin/cc -DNDEBUG -Dshadow_preload_tor_EXPORTS -I/scratch/rjansen/phantom/code/shadow-plugin-tor/build/main/src -I/scratch/rjansen/phantom/code/shadow-plugin-tor/src -I/scratch/rjansen/phantom/code/shadow-plugin-tor/cmake -I/home/rjansen/.shadow/include -I/home/rjansen/.shadow/share/cmake/Modules  -O2 -ggdb -fno-omit-frame-pointer -fno-inline -fno-strict-aliasing -Wno-unknown-attributes -Wno-unused-command-line-argument -Wno-unknown-warning-option -std=gnu99 -fPIC -fPIC   -U_FORTIFY_SOURCE -o CMakeFiles/shadow-preload-tor.dir/shadowtor-preload.c.o   -c /scratch/rjansen/phantom/code/shadow-plugin-tor/src/shadowtor-preload.c
+#[100%] Linking C shared library libshadow-preload-tor.so
+#/usr/bin/cc -fPIC  -O2 -ggdb -fno-omit-frame-pointer -fno-inline -fno-strict-aliasing -Wno-unknown-attributes -Wno-unused-command-line-argument -Wno-unknown-warning-option -std=gnu99 -fPIC  -shared -Wl,-soname,libshadow-preload-tor.so -o libshadow-preload-tor.so CMakeFiles/shadow-preload-tor.dir/shadowtor-preload.c.o
+RUN gcc -I/root/.local/include -fPIC -O2 -ggdb -fno-omit-frame-pointer -fno-inline -fno-strict-aliasing -std=gnu99 -fPIC -c src/tor/shadowtor-preload.c -o src/tor/shadowtor-preload.o
+RUN gcc -fPIC -O2 -ggdb -fno-omit-frame-pointer -fno-inline -fno-strict-aliasing -std=gnu99 -fPIC -shared -Wl,-soname,libshadow-preload-tor.so -o libshadow-preload-tor.so src/tor/shadowtor-preload.o
+RUN mkdir -p ~/.local/lib && cp libshadow-preload-tor.so ~/.local/lib/
+
+FROM base as tornettools-base
+RUN apt-get update && apt-get install -y \
+  python3 \
+  python3-pip \
+  dstat \
+  xz-utils
+# tornettools
+WORKDIR /root/src
+RUN ls
+ARG tornettools_repo=https://github.com/shadow/tornettools.git
+ARG tornettools_branch=main
+RUN git clone -b $tornettools_branch $tornettools_repo
+WORKDIR /root/src/tornettools
+RUN git checkout -b phantom c9a6ef9e0ce7f4cb84795f2f8e7cfdcfa7289ecc
+RUN pip3 install -r requirements.txt
+RUN pip3 install -I .
+# tgentools (needed for parsing)
+WORKDIR /root/src
+ARG tgen_repo=https://github.com/shadow/tgen.git
+ARG tgen_branch=main
+RUN git clone -b $tgen_branch $tgen_repo
+WORKDIR /root/src/tgen
+RUN git checkout -b phantom 47d5eb385195eb22a87b05984116447ad32ef8d7
+WORKDIR /root/src/tgen/tools
+RUN pip3 install -r requirements.txt
+RUN pip3 install -I .
+# oniontracetools (needed for parsing)
+WORKDIR /root/src
+ARG oniontrace_repo=https://github.com/shadow/oniontrace.git
+ARG oniontrace_branch=main
+RUN git clone -b $oniontrace_branch $oniontrace_repo
+WORKDIR /root/src/oniontrace
+RUN git checkout -b phantom bc26be3c4737a8a367a156f12bab2975cd811855
+WORKDIR /root/src/oniontrace/tools
+RUN pip3 install -r requirements.txt
+RUN pip3 install -I .
+# get the network graph files
+WORKDIR /root/src
+ARG tmodel_repo=https://github.com/tmodel-ccs2018/tmodel-ccs2018.github.io.git
+ARG tmodel_branch=master
+RUN git clone --depth=1 -b $tmodel_branch $tmodel_repo
+WORKDIR /root/src/tmodel-ccs2018.github.io/data/shadow/network
+RUN xz -k -d atlas-lossless.201801.shadow113.graphml.xml.xz
+RUN xz -k -d atlas_v201801.shadow_v2.gml.xz
+RUN mkdir -p /share
+RUN mv atlas-lossless.201801.shadow113.graphml.xml /share/atlas.201801.shadow113.noloss.graphml.xml
+RUN mv atlas_v201801.shadow_v2.gml /share/atlas_v201801.shadow_v2.gml
+
+FROM tornettools-base as tornettools-simulate
+WORKDIR /root/data
+# tor runtime deps
+RUN apt-get update && apt-get install -y \
+  zlib1g-dev
+# note: using our custom-built libevent-dev libssl-dev
+# which will be copied from build-tor into /root/.local/ below
+# shadow runtime deps
+RUN apt-get update && apt-get install -y \
+  libglib2.0-0 \
+  libigraph-dev \
+  libprocps-dev
+#COPY --from=tornettools-generate /root/data/tornet-* /root/data/tornet
+RUN echo fs.nr_open = 104857600 >> /etc/sysctl.conf
+RUN echo fs.file-max = 104857600 >> /etc/sysctl.conf
+RUN echo vm.max_map_count = 1073741824 >> /etc/sysctl.conf
+RUN echo kernel.pid_max = 4194300 >> /etc/sysctl.conf
+RUN echo kernel.threads-max = 4194300 >> /etc/sysctl.conf
+#RUN sysctl -p
+# Get the binaries for our sim tools
+COPY --from=build-shadow-phantom /phantom /phantom/
+COPY --from=build-shadow-classic /classic /classic/
+# Our configs expect the sim binaries to live in ~/.local.
+COPY --from=build-tgen /root/.local /root/.local/
+COPY --from=build-tor /root/.local /root/.local/
+COPY --from=build-tor-preload /root/.local /root/.local/
+COPY --from=build-oniontrace /root/.local /root/.local/
+ENV LD_LIBRARY_PATH=/classic/lib:/root/.local/lib
+
+# Default command runs the simulation
+#CMD tornettools simulate -s /root/.local/bin/shadow tornet
+CMD bash run.sh

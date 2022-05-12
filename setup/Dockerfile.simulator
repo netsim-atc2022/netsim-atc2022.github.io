@@ -1,0 +1,45 @@
+FROM ubuntu:20.04 as base
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV DEBIAN_FRONTEND=noninteractive
+
+# https://fabianlee.org/2018/02/11/ubuntu-a-centralized-apt-package-cache-using-apt-cacher-ng/
+RUN apt-get update && apt-get install -y net-tools
+RUN if [[ `netstat -an | grep "LISTEN " | grep -c :3142` -gt 0 ]] ; \
+    then \
+      echo Will use detected apt-cacher-ng service ; \
+      echo "Acquire::http::Proxy \"http://127.0.0.1:3142\";" > /etc/apt/apt.conf.d/00proxy ; \
+    else \
+      echo apt-cacher-ng not detected ; \
+    fi
+RUN apt-get update && apt-get install -y git 
+
+# Build phantom shadow
+FROM base as build-shadow-phantom
+WORKDIR /root/src
+ARG shadow_repo=https://github.com/shadow/shadow.git 
+ARG shadow_branch=v2.0.0-pre.4
+RUN git clone --depth=1 -b $shadow_branch $shadow_repo
+WORKDIR /root/src/shadow
+# copy local patch into image and apply it
+COPY patches.tar /root/src/shadow/.
+RUN tar -xf patches.tar
+RUN git apply patches/phantom/0001-Add-clock_nanosleep-syscall-handler.patch
+RUN git apply patches/phantom/0002-thread_ptrace-drop-unnecessary-spinning.patch
+# build
+ENV CC gcc
+ENV CXX g++
+ENV CONTAINER ubuntu:20.04
+ENV BUILDTYPE release
+ENV RUSTPROFILE minimal
+RUN ci/container_scripts/install_deps.sh
+RUN ci/container_scripts/install_extra_deps.sh
+ENV PATH "/root/.local/bin:/root/.cargo/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/root/.local/lib"
+RUN ./setup build -j`nproc` --prefix /phantom 
+RUN ./setup install
+RUN apt-get update && apt-get install -y python3 curl
+COPY test.yaml /root/.
+
+# Default command to pop a shell
+WORKDIR /root/data
+CMD bash
