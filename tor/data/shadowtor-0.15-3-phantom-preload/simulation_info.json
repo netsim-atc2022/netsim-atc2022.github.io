@@ -1,0 +1,12 @@
+{
+  "net_scale": 0.15,
+  "num_circuits_ten_minutes": 223344,
+  "num_dir_authorities": 3,
+  "num_emulated_users": 118790,
+  "num_public_relays": 6910,
+  "num_sampled_relays": 1036,
+  "num_tgen_markov_clients": 1188,
+  "num_tgen_perf_clients": 119,
+  "num_tgen_servers": 119,
+  "tornettools_generate_seed": 1395194770
+}

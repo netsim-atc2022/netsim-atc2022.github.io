@@ -1,0 +1,10 @@
+{
+  "real_time": "22:12:30.282250",
+  "sim_time": "00:59:59.000000000",
+  "total_packets_recv": 30782860796,
+  "total_packets_recv_inet": 24783609295,
+  "total_packets_recv_localhost": 5999251501,
+  "total_packets_sent": 30785461645,
+  "total_packets_sent_inet": 24786210144,
+  "total_packets_sent_localhost": 5999251501
+}
