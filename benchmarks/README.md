@@ -78,6 +78,15 @@ The `launch.sh` script will launch docker and cause it to execute the `run.sh`
 script to run all of the experiment configs. This process internally runs the
 correct number of trials of each experiment.
 
+**NOTE**: It is possible that the launch script will fail. For some unknown
+reason, Docker sometimes does not work correctly when the `--ulimit` flags
+are used. If you run into an issue like this:
+
+    $ sudo bash launch.sh
+    docker: Error response from daemon: failed to create shim: OCI runtime create failed: container_linux.go:380: starting container process caused: process_linux.go:545: container init caused: process_linux.go:446: setting rlimits for ready process caused: error setting rlimit type 7: operation not permitted: unknown
+
+Then try deleting the `--ulimit` flags from the `launch.sh` file and try again.
+
 #### Plot results
 
 Set up the analysis environment, starting from the artifact base directory
