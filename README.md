@@ -3,7 +3,7 @@
 This page describes research artifacts for the following research publication:
 
 **Co-opting Linux Processes for High-Performance Network Simulation**  
-_Proceedings of [2022 USENIX Annual Technical Conference](https://www.usenix.org/conference/atc22) (ATC 2022)_  
+_Proceedings of [the 2022 USENIX Annual Technical Conference](https://www.usenix.org/conference/atc22) (ATC 2022)_  
 by [Rob Jansen](https://www.robgjansen.com), [Jim Newsome](https://github.com/sporksmith), and [Ryan Wails](https://ryanwails.com/)  
 <!--\[[Conference version](https://www.robgjansen.com/publications/netsim-atc2022.pdf)\]-->
 
