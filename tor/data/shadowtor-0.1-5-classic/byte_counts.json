@@ -1,0 +1,14 @@
+{
+  "gbit_recv": 89049.373301936,
+  "gbit_recv_per_real_sec": 2.845860954076965,
+  "gbit_recv_per_sim_sec": 24.74281003110197,
+  "gbit_sent": 89057.686781664,
+  "gbit_sent_per_real_sec": 2.8461266382302965,
+  "gbit_sent_per_sim_sec": 24.745119972676854,
+  "real_seconds": 31290.837725,
+  "real_time": "08:41:30.837725",
+  "sim_seconds": 3599.0,
+  "sim_time": "00:59:59.000000000",
+  "total_bytes_recv": 11131171662742,
+  "total_bytes_sent": 11132210847708
+}
