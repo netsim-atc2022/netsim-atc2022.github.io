@@ -1,3 +1,5 @@
+set -euo pipefail
+
 cd exps
 echo $RUNHOST > runner_hostname.txt
 count=0

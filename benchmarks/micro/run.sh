@@ -1,3 +1,5 @@
+set -euo pipefail
+
 cd exps
 for d in shadow*
 do
