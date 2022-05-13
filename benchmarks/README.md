@@ -16,16 +16,17 @@ ensure that we were running identical software stacks across the blade machines.
 
 Set these configs on the host machine:
 
-    sudo su
-    echo fs.nr_open = 104857600 >> /etc/sysctl.conf
-    echo fs.file-max = 104857600 >> /etc/sysctl.conf
-    echo vm.max_map_count = 1073741824 >> /etc/sysctl.conf
-    echo kernel.pid_max = 4194300 >> /etc/sysctl.conf
-    echo kernel.threads-max = 4194300 >> /etc/sysctl.conf
-    echo kernel.sched_rt_runtime_us = -1 >> /etc/sysctl.conf
-    exit
+    sudo sysctl \
+      fs.nr_open=104857600 \
+      fs.file-max=104857600 \
+      vm.max_map_count=1073741824 \
+      kernel.pid_max=4194300 \
+      kernel.threads-max=4194300 \
+      kernel.sched_rt_runtime_us=-1
 
-You may need to log out and back in, or reboot to apply these settings.
+Rebooting will restore your original settings. Alternatively you can make these
+changes more permanently by adding these lines to `/etc/sysctl.conf` and then
+rebooting and/or running `sudo sysctl --system`.
 
 The microbenchmarks should consume no more than 5 GiB of RAM, and should
 complete within a few minutes. Some of the macrobenchmarks may consume up to 256
