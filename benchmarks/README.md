@@ -103,9 +103,9 @@ Once you have a `results.json` in your CWD, you can reproduce the plots with:
 
 We provide in the `plots` subdirectory the output from running the above command
 on our `data/results.json` file; these plots are shown in our paper in Figures
-[4](plots/interpose.pdf), [5](plots/memmgr.pdf),
-[6](plots/cpusched-seccomp.pdf), [16](plots/cpusched-ptrace.pdf), and
-[17](plots/cpusched-classic.pdf).
+[4](micro/plots/interpose.pdf), [5](micro/plots/memmgr.pdf),
+[6](micro/plots/cpusched-seccomp.pdf), [16](micro/plots/cpusched-ptrace.pdf), and
+[17](micro/plots/cpusched-classic.pdf).
 
 ### Macrobenchmarks
 
@@ -130,8 +130,8 @@ results, starting from the artifact base directory `netsim-atc2022.github.io/`:
 #### Run experiments
 
 Some of the macrobenchmarks may consume up to 256 GiB of RAM at once. Running
-them all will collectively require 100-200 GiB of storage space a week or two
-when running them serially. 
+them all will collectively require 100-200 GiB of storage space and it will take
+a week or two of computation time when running them serially. 
 
 We understand that it may not be feasible for everyone to re-run our experiments
 due to the resource requirements. For those unable to run the experiments, we
@@ -161,7 +161,7 @@ To run multiple trials (e.g., 3):
         tar xJf configs.tar.xz
         mv configs exps
         bash launch.sh
-        mv exps exps{$trial}
+        mv exps exps${trial}
     done
 
 We ran 10 trials for our paper, manually parallelizing the trials across
@@ -231,16 +231,16 @@ because the plots that we generate uses latex to format some text:
 Several PDFs should be generated in the current directory as well as in several
 `phase[1-6]_metrics` subdirectories. We provide the plots that appeared in the
 paper in the `plots` subdirectory; these plots are shown in our paper in Figures
-[7](plots/phold-phase1-perf-duration-time-sec-skewed.pdf),
-[8](plots/phold-phase2-cpusched-bar.pdf),
-[9](plots/phold-phase3-memmgr-bar-seccomp.pdf),
-[10](plots/phold-phase4-sched-bar-seccomp.pdf),
-[11a](plots/phold-phase6-perf-duration-time-sec-28.pdf),
-[11b](plots/phold-phase6-seconds-to-init-28.pdf),
-[11c](plots/phold-phase6-mem-used-gib-28.pdf),
-[18](plots/phold-phase1-seconds-to-init-skewed.pdf),
-[19](plots/phold-phase3-memmgr-bar-ptrace.pdf),
-[20](plots/phold-phase4-sched-bar-ptrace.pdf),
-[21a](plots/phold-phase5-cpuload-bar.pdf),
-[21b](plots/phold-phase5-msgload-bar.pdf), and
-[21c](plots/phold-phase5-weights-bar.pdf).
+[7](macro/plots/phold-phase1-perf-duration-time-sec-skewed.pdf),
+[8](macro/plots/phold-phase2-cpusched-bar.pdf),
+[9](macro/plots/phold-phase3-memmgr-bar-seccomp.pdf),
+[10](macro/plots/phold-phase4-sched-bar-seccomp.pdf),
+[11a](macro/plots/phold-phase6-perf-duration-time-sec-28.pdf),
+[11b](macro/plots/phold-phase6-seconds-to-init-28.pdf),
+[11c](macro/plots/phold-phase6-mem-used-gib-28.pdf),
+[18](macro/plots/phold-phase1-seconds-to-init-skewed.pdf),
+[19](macro/plots/phold-phase3-memmgr-bar-ptrace.pdf),
+[20](macro/plots/phold-phase4-sched-bar-ptrace.pdf),
+[21a](macro/plots/phold-phase5-cpuload-bar.pdf),
+[21b](macro/plots/phold-phase5-msgload-bar.pdf), and
+[21c](macro/plots/phold-phase5-weights-bar.pdf).
