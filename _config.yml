@@ -2,3 +2,6 @@ theme: jekyll-theme-slate
 title: netsim-atc2022
 description: "Co-opting Linux Processes for High-Performance Network Simulation"
 show_downloads: false
+github:
+  is_project_page: true
+
