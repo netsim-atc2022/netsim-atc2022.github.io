@@ -20,7 +20,7 @@ def compute_mean_and_error(result, confidence_level=0.99):
 
     level = two_to_one_sided_confidence_level(confidence_level)
     t = studentst.ppf(level, n-1)
-    e = t * s / sqrt(n-1)
+    e = t * s / sqrt(n)
 
     # symmetric error
     return m, e
