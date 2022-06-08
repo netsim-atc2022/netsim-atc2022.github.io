@@ -29,6 +29,14 @@ publication of our paper. Therefore, there are multiple versions to consider:
 
 ### Docker
 
+Our paper uses [Shadow at tag
+`v2.0.0-pre.4`](https://github.com/shadow/shadow/tree/v2.0.0-pre.4), which
+requires the `pidfd_open` syscall: this syscall was added in Linux kernel v5.3
+(published on 2019-09-15). Please ensure that your docker host machine is
+running Linux v5.3 or later, e.g., using `uname -a`. (The lastest version
+of Shadow from [the Shadow Github page](https://github.com/shadow/shadow) does
+not use `pidfd_open` and does not have this requirement.)
+
 To install Shadow `v2.0.0-pre.4` using Docker, first 
 [install Docker](https://docs.docker.com/get-docker/) and `git`,
 and then run these commands:

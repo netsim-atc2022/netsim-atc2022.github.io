@@ -10,8 +10,17 @@ The Tor results are presented in our paper in §5.3 and Appendix E.3.2.
 We run the Tor network accuracy verification using a blade server cluster in
 which each blade contained identical hardware: 1.25 TiB of RAM and 4×8 core
 Intel Xeon E5-4627v2 CPUs (without hyper-threading support) running at 3.30 GHz.
-The servers were running CentOS 7 with Linux kernel version 5.11.6-1. We
-configured our experiments to run in Docker containers (based off of Ubuntu
+The servers were running CentOS 7 with Linux kernel version 5.11.6-1.
+
+Our paper uses [Shadow at tag
+`v2.0.0-pre.4`](https://github.com/shadow/shadow/tree/v2.0.0-pre.4), which
+requires the `pidfd_open` syscall: this syscall was added in Linux kernel v5.3
+(published on 2019-09-15). Please ensure that your docker host machine is
+running Linux v5.3 or later, e.g., using `uname -a`. (The lastest version of
+Shadow from [the Shadow Github page](https://github.com/shadow/shadow) does not
+use `pidfd_open` and does not have this requirement.)
+
+We configured our experiments to run in Docker containers (based off of Ubuntu
 v20.04) to ensure that we were running identical software stacks across the
 blade machines.
 

@@ -10,9 +10,18 @@ All of the microbenchmark and macrobenchmark experiments were conducted using a
 blade server cluster in which each blade contained identical hardware: 256 GiB
 of RAM and 2×14 core Intel Xeon E5-2697v3 CPUs (56 total hyper-threads) running
 at 2.6 GHz. Each blade machine was running CentOS 7 and Linux kernel version
-5.11.6-1, although other versions of Linux should work just as well as long as
-it can run docker. We configured our experiments to run in docker containers to
-ensure that we were running identical software stacks across the blade machines.
+5.11.6-1.
+
+Our paper uses [Shadow at tag
+`v2.0.0-pre.4`](https://github.com/shadow/shadow/tree/v2.0.0-pre.4), which
+requires the `pidfd_open` syscall: this syscall was added in Linux kernel v5.3
+(published on 2019-09-15). Please ensure that your docker host machine is
+running Linux v5.3 or later, e.g., using `uname -a`. (The lastest version of
+Shadow from [the Shadow Github page](https://github.com/shadow/shadow) does not
+use `pidfd_open` and does not have this requirement.)
+
+We configured our experiments to run in docker containers to ensure that we were
+running identical software stacks across the blade machines.
 
 Set these configs on the host machine:
 
